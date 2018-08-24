@@ -70,6 +70,10 @@ func handleClient(sess *smux.Session, p1 io.ReadWriteCloser, quiet bool) {
 	}
 	defer p2.Close()
 
+	// for redir sock5
+	rawaddr, err := GetOriginalDestination(p1.(net.Conn))
+	p2.Write(rawaddr)
+
 	// start tunnel
 	p1die := make(chan struct{})
 	go func() { io.Copy(p1, p2); close(p1die) }()
